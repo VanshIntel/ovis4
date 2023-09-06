@@ -264,6 +264,7 @@ OPTION_DEFAULT_ENABLE([synthetic], [ENABLE_SYNTHETIC])
 OPTION_DEFAULT_ENABLE([varset], [ENABLE_VARSET])
 OPTION_DEFAULT_ENABLE([lnet_stats], [ENABLE_LNET_STATS])
 OPTION_DEFAULT_ENABLE([meminfo], [ENABLE_MEMINFO])
+OPTION_DEFAULT_DISABLE([gpumetrics], [ENABLE_GPU_METRICS])
 OPTION_DEFAULT_DISABLE([filesingle], [ENABLE_FILESINGLE])
 OPTION_DEFAULT_DISABLE([msr_interlagos], [ENABLE_MSR_INTERLAGOS])
 OPTION_DEFAULT_ENABLE([array_example], [ENABLE_ARRAY_EXAMPLE])
@@ -286,7 +287,6 @@ OPTION_DEFAULT_DISABLE([fptrans], [ENABLE_FPTRANS])
 OPTION_DEFAULT_ENABLE([tsampler], [ENABLE_TSAMPLER])
 OPTION_DEFAULT_ENABLE([cray_power_sampler], [ENABLE_CRAY_POWER_SAMPLER])
 dnl cray_power_sampler won't build with --disable-tsampler
-
 OPTION_DEFAULT_DISABLE([sysclassib], [ENABLE_SYSCLASSIB])
 OPTION_DEFAULT_DISABLE([opa2], [ENABLE_OPA2])
 OPTION_DEFAULT_DISABLE([ibnet], [ENABLE_IBNET])
@@ -807,6 +807,7 @@ ldms/src/sampler/app_sampler/Makefile
 ldms/src/contrib/sampler/Makefile
 ldms/src/contrib/sampler/ipmireader/Makefile
 ldms/src/contrib/sampler/tutorial/Makefile
+ldms/src/contrib/sampler/gpu_metrics_sampler/Makefile
 ldms/src/third-plugins/Makefile
 ldms/src/ldmsd/Makefile
 ldms/src/ldmsd/test/Makefile
