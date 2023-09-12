@@ -64,8 +64,7 @@ SDLLDFLAGS = $(LDFLAGS0)
 
 AM_CPPFLAGS = @OVIS_INCLUDE_ABS@ $(SDLCFLAGS)
 AM_LDFLAGS = @OVIS_LIB_ABS@ $(SDLLDFLAGS)
-COMMON_LIBADD = -lsampler_base -lldms -lovis_util -lcoll
-@LDFLAGS_GETTIME@
+COMMON_LIBADD = -lsampler_base -lldms -lovis_util -lcoll @LDFLAGS_GETTIME@
 GMGLIBS = -L. -lgmg -L/usr/lib/x86_64-linux-gnu/ -lze_loader
 
 if ENABLE_GPU_METRICS

@@ -187,10 +187,24 @@ static int config(struct ldmsd_plugin *self, struct attr_value_list *kwl, struct
 	}
 
 	base = base_config(avl, SAMP, SAMP, msglog);
-	if (!base) {
+	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 191\n", base->set);
+	/*if (!base) {
+	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 194\n", base->set);
 		rc = errno;
 		goto err;
-	}
+	} else {
+	    //Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 199\n", base->set);
+    }*/
+    if(base == NULL){
+            // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 203\n", base);
+        } else {
+            // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 206\n", base);
+        }
 
 	rc = create_metric_set(base);
 	if (rc) {
@@ -223,6 +237,8 @@ static int sample(struct ldmsd_sampler *self)
 	}
 
 	base_sample_begin(base);
+	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 241\n", base->set);
 	metric_no = metric_offset;
 	fseek(mf, 0, SEEK_SET);
 	do {
@@ -240,6 +256,8 @@ static int sample(struct ldmsd_sampler *self)
 	} while (s);
  out:
 	base_sample_end(base);
+	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 260\n", base->set);
 	return 0;
 }
 

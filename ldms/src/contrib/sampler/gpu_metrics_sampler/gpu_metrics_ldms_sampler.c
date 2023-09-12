@@ -252,10 +252,26 @@ static int config(struct ldmsd_plugin *self,
 
     // Create an instance from the base "class".  This is effectively calling
     // the base class constructor.
+    // Log parameter values so that it appears in /opt/clmgr/log/ldms_sampler.log
     base = base_config(attribute_value_list, SAMP, SAMP, msglog);
-    if (!base) {
-        rc = errno;
-        goto err;
+    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 258\n", base->set);
+    //if (!base) {
+    //   Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    //   msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 264\n", base->set);
+    //   rc = errno;
+    //   goto err;
+    //} else {
+    //    Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    //    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 269\n", base->set);
+    //}
+
+    if(base == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 271\n", base);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 274\n", base);
     }
 
     // Create the metric set schema in the base instance.  This plugin instance
@@ -308,9 +324,15 @@ static int sample(struct ldmsd_sampler *self) {
     }
     uint32_t numDevicesToSample = MIN(g_numberOfDevicesInSchema, numDevices);   // cannot sample more than schema size
 
+    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 328\n", base->set);
     base_sample_begin(base);
+    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 331\n", base->set);
     populateMetricSet(phDevices, numDevicesToSample, set, metric_offset);
     base_sample_end(base);
+    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 335\n", base->set);
     size_t mallocCount = getMallocCount();
     if (mallocCount != 1) {
         // Only allocated memory is the device handler array.
