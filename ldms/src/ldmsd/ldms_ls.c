@@ -392,9 +392,10 @@ void print_cb(ldms_t t, ldms_set_t s, int rc, void *arg)
 	tm = localtime(&ti);
 	strftime(dtsz, sizeof(dtsz), "%a %b %d %H:%M:%S %Y %z", tm);
 
-	printf("%s: %s, last update: %s [%dus] ",
+	printf("%s: %s, last update: %s [%dus], %s is the consistent ",
 	       ldms_set_instance_name_get(s),
-	       (consistent?"consistent":"inconsistent"), dtsz, ts->usec);
+	       (consistent?"consistent":"inconsistent"), dtsz, ts->usec, consistent);
+	printf(consistent, " is the consistent value****************************");
 	if (rc & LDMS_UPD_F_PUSH)
 		printf("PUSH ");
 	if (rc & LDMS_UPD_F_PUSH_LAST)

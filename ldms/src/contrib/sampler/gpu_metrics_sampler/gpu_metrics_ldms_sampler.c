@@ -166,9 +166,18 @@ static int create_metric_set_schema_and_set(base_data_t base) {
     }
 
     set = base_set_new(base);
+    // Log set value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the set value in gpu_metrics_ldms_sampler.c at 170\n", set);
     if (!set) {
         rc = errno;
         goto err;
+    }
+    if(set == NULL){
+        // Log set value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the set value in gpu_metrics_ldms_sampler.c at 177\n", set);
+    } else {
+        // Log set value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the set value in gpu_metrics_ldms_sampler.c at 180\n", set);
     }
 
     return 0;
@@ -181,7 +190,7 @@ static int create_metric_set_schema_and_set(base_data_t base) {
 
 static void printValList(const char *szListName, struct attr_value_list *av_list) {
     size_t listSize = MIN(av_list->count, av_list->size);
-    for (size_t i = 0; i < listSize; i) {
+    for (size_t i = 0; i < listSize; i++) {
         msglog(LDMSD_LDEBUG, "%s[%d] = %s:%s\n",
                szListName, i, av_name(av_list, i), av_value_at_idx(av_list, i));
     }
@@ -196,7 +205,7 @@ static int config_check(struct attr_value_list *keyword_list, struct attr_value_
 
     char *deprecated[] = {"set"};
 
-    for (i = 0; i < (sizeof(deprecated) / sizeof(deprecated[0])); i) {
+    for (i = 0; i < (sizeof(deprecated) / sizeof(deprecated[0])); i++) {
         value = av_value(attribute_value_list, deprecated[i]);
         if (value) {
             msglog(LDMSD_LERROR, SAMP ": !!!config argument %s has been deprecated.\n",
@@ -255,23 +264,32 @@ static int config(struct ldmsd_plugin *self,
     // Log parameter values so that it appears in /opt/clmgr/log/ldms_sampler.log
     base = base_config(attribute_value_list, SAMP, SAMP, msglog);
     // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 258\n", base->set);
-    //if (!base) {
-    //   Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    //   msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 264\n", base->set);
-    //   rc = errno;
-    //   goto err;
-    //} else {
-    //    Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    //    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 269\n", base->set);
-    //}
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 267\n", base);
+    msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 268\n", base->set);
+    if (!base) {
+       //Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+       msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 271\n", base->set);
+       rc = errno;
+       goto err;
+    } else {
+        //Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 276\n", base->set);
+    }
 
     if(base == NULL){
         // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 271\n", base);
+        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 281 NULL\n", base);
     } else {
         // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 274\n", base);
+        msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 284\n", base);
+    }
+
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 289 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 292\n", base->set);
     }
 
     // Create the metric set schema in the base instance.  This plugin instance
@@ -325,14 +343,32 @@ static int sample(struct ldmsd_sampler *self) {
     uint32_t numDevicesToSample = MIN(g_numberOfDevicesInSchema, numDevices);   // cannot sample more than schema size
 
     // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 328\n", base->set);
+    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 346\n", base);
+    msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 347\n", base->set);
     base_sample_begin(base);
-    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 331\n", base->set);
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 351 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 354\n", base->set);
+    }
     populateMetricSet(phDevices, numDevicesToSample, set, metric_offset);
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 359 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 362\n", base->set);
+    }
     base_sample_end(base);
-    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in gpu_metrics_ldms_sampler.c at 335\n", base->set);
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 367 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in gpu_metrics_ldms_sampler.c at 370\n", base->set);
+    }
     size_t mallocCount = getMallocCount();
     if (mallocCount != 1) {
         // Only allocated memory is the device handler array.
@@ -345,7 +381,7 @@ static int sample(struct ldmsd_sampler *self) {
 }
 
 /**
- * Release any opened resource.  Note that we have to call OneAPI C destructor to
+ * Release any opened resource.  Note that we have to call OneAPI C++ destructor to
  * close any opened handles.
  * @param self this plugin instance.
  */

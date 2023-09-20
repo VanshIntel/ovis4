@@ -93,8 +93,8 @@ const size_t c_numMetrics = sizeof(metricsDefinitions) / sizeof(metricsDefinitio
 
 void constructMetricName(const char *szBaseMetricName, uint8_t deviceId, char *szMetricName) {
     snprintf(szMetricName, MAX_METRIC_NAME_LENGTH, "gpu%02x_", deviceId);
-    strncpy(szMetricName  6, szBaseMetricName, MAX_METRIC_NAME_LENGTH - 6);
-    GMGLOG(LDMSD_LDEBUG, "metricName = %s\n", szMetricName);
+    strncpy(szMetricName + 6, szBaseMetricName, MAX_METRIC_NAME_LENGTH - 6);
+    //GMGLOG(LDMSD_LDEBUG, "metricName = %s\n", szMetricName);
 }
 
 /**
@@ -108,12 +108,12 @@ void constructMetricName(const char *szBaseMetricName, uint8_t deviceId, char *s
 int populateMetricSchema(ldms_schema_t schema, uint32_t numDevices) {
     int rc = 0;
 
-    for (uint32_t deviceId = 0; deviceId < MIN(numDevices, MAX_NUMBER_DEVICE_INDEX); deviceId) {
-        for (size_t i = 0; i < c_numMetrics; i) {
-            char szMetricName[MAX_METRIC_NAME_LENGTH  1] = {};
+    for (uint32_t deviceId = 0; deviceId < MIN(numDevices, MAX_NUMBER_DEVICE_INDEX); deviceId++) {
+        for (size_t i = 0; i < c_numMetrics; i++) {
+            char szMetricName[MAX_METRIC_NAME_LENGTH + 1] = {};
             constructMetricName(metricsDefinitions[i].name, deviceId, szMetricName);
-            GMGLOG(LDMSD_LDEBUG, "metricsDefinitions[i=%d].name = %s\n", i, metricsDefinitions[i].name);
-            GMGLOG(LDMSD_LDEBUG, "szMetricName = %s\n", szMetricName);
+           //GMGLOG(LDMSD_LDEBUG, "metricsDefinitions[i=%d].name = %s\n", i, metricsDefinitions[i].name);
+           //GMGLOG(LDMSD_LDEBUG, "szMetricName = %s\n", szMetricName);
             if (ldms_type_is_array(metricsDefinitions[i].type)) {
                 rc = ldms_schema_metric_array_add(schema, szMetricName,
                                                   metricsDefinitions[i].type, metricsDefinitions[i].count);
@@ -121,7 +121,7 @@ int populateMetricSchema(ldms_schema_t schema, uint32_t numDevices) {
                 rc = ldms_schema_metric_add(schema, szMetricName, metricsDefinitions[i].type);
             }
             if (rc < 0) {
-                GMGLOG(LDMSD_LERROR, "!!!Insufficient resources or duplicate name: rc = %d\n", rc);
+               //GMGLOG(LDMSD_LERROR, "!!!Insufficient resources or duplicate name: rc = %d\n", rc);
                 break;
             }
         }
@@ -133,36 +133,36 @@ int populateMetricSchema(ldms_schema_t schema, uint32_t numDevices) {
 
 void setD64(ldms_set_t s, int metricId, ze_device_handle_t hDevice, doubleGetMetricFuncPtr_t pf) {
     if (pf == NULL) {
-        GMGLOG(LDMSD_LERROR, "pf == NULL\n");
+        //GMGLOG(LDMSD_LERROR, "pf == NULL\n");
         return;
     }
 
     double val = pf(hDevice);
-    GMGLOG(LDMSD_LINFO, "doublePf(hDevice=%p) => %lf\n", hDevice, val);
+    //GMGLOG(LDMSD_LINFO, "doublePf(hDevice=%p) => %lf\n", hDevice, val);
 
     ldms_metric_set_double(s, metricId, val);
 }
 
 void setU64(ldms_set_t s, int metricId, ze_device_handle_t hDevice, u64GetMetricFuncPtr_t pf) {
     if (pf == NULL) {
-        GMGLOG(LDMSD_LERROR, "pf == NULL\n");
+        //GMGLOG(LDMSD_LERROR, "pf == NULL\n");
         return;
     }
 
     uint64_t val = pf(hDevice);
-    GMGLOG(LDMSD_LINFO, "u64GetMetricFuncPtr_t(hDevice=%p) => %ld\n", hDevice, val);
+    //GMGLOG(LDMSD_LINFO, "u64GetMetricFuncPtr_t(hDevice=%p) => %ld\n", hDevice, val);
 
     ldms_metric_set_u64(s, metricId, val);
 }
 
 void setS32(ldms_set_t s, int metricId, ze_device_handle_t hDevice, s32GetMetricFuncPtr_t pf) {
     if (pf == NULL) {
-        GMGLOG(LDMSD_LERROR, "pf == NULL\n");
+        //GMGLOG(LDMSD_LERROR, "pf == NULL\n");
         return;
     }
 
     int32_t val = pf(hDevice);
-    GMGLOG(LDMSD_LINFO, "s32GetMetricFuncPtr_t(hDevice=%p) => %d\n", hDevice, val);
+    //GMGLOG(LDMSD_LINFO, "s32GetMetricFuncPtr_t(hDevice=%p) => %d\n", hDevice, val);
 
     ldms_metric_set_s32(s, metricId, val);
 }
@@ -178,7 +178,7 @@ void setString(ldms_set_t s,
 void setU8Array(ldms_set_t s, int metricId, ze_device_handle_t hDevice,
                 const8PtrGetMetricFuncPtr_t pf, uint32_t count) {
     const uint8_t *u8Array = pf(hDevice);
-    for (uint32_t j = 0; j < count; j) {
+    for (uint32_t j = 0; j < count; j++) {
         ldms_metric_array_set_u8(s, metricId, j, u8Array[j]);
     }
 }
@@ -193,28 +193,28 @@ void setU8Array(ldms_set_t s, int metricId, ze_device_handle_t hDevice,
 void populateMetricSet(ze_device_handle_t *phDevices, uint32_t numDevices, ldms_set_t s, int firstGpuMetricId) {
     int metricId = firstGpuMetricId;
 
-    for (uint32_t deviceId = 0; deviceId < numDevices; deviceId) {
-        for (size_t i = 0; i < c_numMetrics; i) {
+    for (uint32_t deviceId = 0; deviceId < numDevices; deviceId++) {
+        for (size_t i = 0; i < c_numMetrics; i++) {
             switch (metricsDefinitions[i].type) {
                 case LDMS_V_CHAR_ARRAY:
-                    setString(s, metricId, phDevices[deviceId],
+                    setString(s, metricId++, phDevices[deviceId],
                               (stringGetMetricFuncPtr_t) (metricsDefinitions[i].pf));
                     break;
                 case LDMS_V_U8_ARRAY:
-                    setU8Array(s, metricId, phDevices[deviceId],
+                    setU8Array(s, metricId++, phDevices[deviceId],
                                (const8PtrGetMetricFuncPtr_t) (metricsDefinitions[i].pf), metricsDefinitions[i].count);
                     break;
                 case LDMS_V_D64:
-                    setD64(s, metricId, phDevices[deviceId], (doubleGetMetricFuncPtr_t) (metricsDefinitions[i].pf));
+                    setD64(s, metricId++, phDevices[deviceId], (doubleGetMetricFuncPtr_t) (metricsDefinitions[i].pf));
                     break;
                 case LDMS_V_S32:
-                    setS32(s, metricId, phDevices[deviceId], (s32GetMetricFuncPtr_t) (metricsDefinitions[i].pf));
+                    setS32(s, metricId++, phDevices[deviceId], (s32GetMetricFuncPtr_t) (metricsDefinitions[i].pf));
                     break;
                 case LDMS_V_U64:
-                    setU64(s, metricId, phDevices[deviceId], (u64GetMetricFuncPtr_t) (metricsDefinitions[i].pf));
+                    setU64(s, metricId++, phDevices[deviceId], (u64GetMetricFuncPtr_t) (metricsDefinitions[i].pf));
                     break;
                 default:
-                    GMGLOG(LDMSD_LERROR, "!!!Unexpected metric type: %d\n", metricsDefinitions[i].type);
+                    //GMGLOG(LDMSD_LERROR, "!!!Unexpected metric type: %d\n", metricsDefinitions[i].type);
                     break;
             }
         }

@@ -60,25 +60,25 @@ size_t getMallocCount() {
 }
 
 static void *GMG_MALLOC(size_t size) {
-    GMGLOG(LDMSD_LDEBUG, ">>GMG_MALLOC(size=%ld)\n", size);
+    //GMGLOG(LDMSD_LDEBUG, ">>GMG_MALLOC(size=%ld)\n", size);
     void *p = calloc(size, 1);
     if (!p) {
-        GMGLOG(LDMSD_LERROR, "!!!calloc(size=%ld, 1) => NULL\n", size);
+        //GMGLOG(LDMSD_LERROR, "!!!calloc(size=%ld, 1) => NULL\n", size);
         return NULL;
     }
-    mallocCount;
-    GMGLOG(LDMSD_LDEBUG, "<<GMG_MALLOC(size=%ld) => %p\n", size, p);
+    mallocCount++;
+    //GMGLOG(LDMSD_LDEBUG, "<<GMG_MALLOC(size=%ld) => %p\n", size, p);
     return p;
 }
 
 static void gmgFree(void *p) {
-    GMGLOG(LDMSD_LDEBUG, ">>gmgFree(p=%p)\n", p);
+    //GMGLOG(LDMSD_LDEBUG, ">>gmgFree(p=%p)\n", p);
     if (!p) {
-        GMGLOG(LDMSD_LERROR, "!!!Attempting to free a NULL pointer\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Attempting to free a NULL pointer\n");
         return;
     }
     free(p);
-    GMGLOG(LDMSD_LDEBUG, "<<gmgFree()\n");
+    //GMGLOG(LDMSD_LDEBUG, "<<gmgFree()\n");
     --mallocCount;
 }
 
@@ -104,7 +104,7 @@ bool getSimulationMode() {
 
 void setSimulationMode(bool bIsInSimulationMode) {
     g_bIsInSimulationMode = bIsInSimulationMode;
-    GMGLOG(LDMSD_LDEBUG, "Setting g_bIsInSimulationMode=%d\n", bIsInSimulationMode);
+    //GMGLOG(LDMSD_LDEBUG, "Setting g_bIsInSimulationMode=%d\n", bIsInSimulationMode);
 }
 
 #ifdef ENABLE_AUTO_SIMULATION
@@ -116,18 +116,18 @@ void autoSetSimulationMode() {
 #endif
 
 ze_result_t initializeOneApi() {
-    GMGLOG(LDMSD_LINFO, ">>initializeOneApi()\n");
+    //GMGLOG(LDMSD_LINFO, ">>initializeOneApi()\n");
     if (g_bIsInSimulationMode) {
         return ZE_RESULT_SUCCESS;
     }
 
     if (setenv("ZES_ENABLE_SYSMAN", "1", 1) == -1) {
-        GMGLOG(LDMSD_LERROR, "Cannot set environment variable ZES_ENABLE_SYSMAN=1\n");
+        //GMGLOG(LDMSD_LERROR, "Cannot set environment variable ZES_ENABLE_SYSMAN=1\n");
         return ZE_RESULT_ERROR_UNINITIALIZED;
     }
 
     ze_result_t res = zeInit(ZE_INIT_FLAG_GPU_ONLY);
-    GMGLOG(LDMSD_LINFO, "<<initializeOneApi()\n");
+    //GMGLOG(LDMSD_LINFO, "<<initializeOneApi()\n");
     return res;
 }
 
@@ -138,8 +138,8 @@ static ze_result_t gmgDriverGet(
         *pCount = cNumberOfSimulatedDrivers;
         if (phDrivers == NULL) return ZE_RESULT_SUCCESS;
 
-        for (size_t i = 0; i < *pCount; i) {
-            phDrivers[i] = (ze_driver_handle_t)(i  1);
+        for (size_t i = 0; i < *pCount; i++) {
+            phDrivers[i] = (ze_driver_handle_t)(i + 1);
         }
         return ZE_RESULT_SUCCESS;
     }
@@ -155,8 +155,8 @@ static ze_result_t gmgDeviceGet(
         *pCount = cNumberOfSimulatedDevices;
         if (phDevices == NULL) return ZE_RESULT_SUCCESS;
 
-        for (size_t i = 0; i < *pCount; i) {
-            phDevices[i] = (ze_device_handle_t)(i  1);
+        for (size_t i = 0; i < *pCount; i++) {
+            phDevices[i] = (ze_device_handle_t)(i + 1);
         }
         return ZE_RESULT_SUCCESS;
     }
@@ -170,7 +170,7 @@ static ze_result_t gmgDeviceGetProperties(
         ze_device_properties_t *pDeviceProperties) {
     if (g_bIsInSimulationMode) {
         strncpy(pDeviceProperties->name, "Intel(R) Graphics [0x0bd5]", ZE_MAX_DEVICE_NAME);
-        for (uint32_t i = 0; i < ZE_MAX_DEVICE_UUID_SIZE; i) {
+        for (uint32_t i = 0; i < ZE_MAX_DEVICE_UUID_SIZE; i++) {
             pDeviceProperties->uuid.id[i] = i;
         }
         return ZE_RESULT_SUCCESS;
@@ -188,17 +188,17 @@ ze_result_t gmgsEngineGetActivity(
         struct timespec currentTime;
 
         clock_gettime(CLOCK_REALTIME, &currentTime);
-        pStats->activeTime = (BILLION * currentTime.tv_sec  currentTime.tv_nsec) / 100;
+        pStats->activeTime = (BILLION * currentTime.tv_sec + currentTime.tv_nsec) / 100;
         clock_gettime(CLOCK_REALTIME, &currentTime);
-        pStats->timestamp = BILLION * currentTime.tv_sec  currentTime.tv_nsec;
+        pStats->timestamp = BILLION * currentTime.tv_sec + currentTime.tv_nsec;
 
         return ZE_RESULT_SUCCESS;
     }
 
     ze_result_t res = zesEngineGetActivity(hEngine, pStats);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesEngineGetActivity(hEngine=%p,pStats=%p) => 0x%x\n",
-               hEngine, pStats, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesEngineGetActivity(hEngine=%p,pStats=%p) => 0x%x\n",
+        //       hEngine, pStats, res);
     }
     return res;
 }
@@ -217,8 +217,8 @@ ze_result_t gmgsDeviceEnumEngineGroups(
 
     ze_result_t res = zesDeviceEnumEngineGroups(hDevice, pCount, phEngine);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
-               hDevice, pCount, phEngine, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
+        //       hDevice, pCount, phEngine, res);
     }
     return res;
 }
@@ -227,12 +227,12 @@ static
 ze_driver_handle_t *enumerateDrivers(uint32_t *pCount) {
     ze_result_t res = gmgDriverGet(pCount, NULL);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDriverGet(pCount=%p, NULL) => 0x%x\n", pCount, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDriverGet(pCount=%p, NULL) => 0x%x\n", pCount, res);
         return NULL;
     }
 
     if (*pCount < 1) {
-        GMGLOG(LDMSD_LERROR, "!!!*pCount=%d < 1\n", *pCount);
+        //GMGLOG(LDMSD_LERROR, "!!!*pCount=%d < 1\n", *pCount);
         return NULL;
     }
 
@@ -241,7 +241,7 @@ ze_driver_handle_t *enumerateDrivers(uint32_t *pCount) {
 
     res = gmgDriverGet(pCount, phDrivers);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDriverGet(pCount=%p,phDrivers=%p) => 0x%x\n", pCount, phDrivers, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDriverGet(pCount=%p,phDrivers=%p) => 0x%x\n", pCount, phDrivers, res);
         GMG_FREE(phDrivers);
         return NULL;
     }
@@ -250,7 +250,7 @@ ze_driver_handle_t *enumerateDrivers(uint32_t *pCount) {
 }
 
 ze_driver_handle_t getDriver() {
-    GMGLOG(LDMSD_LINFO, ">>getDriver()\n");
+    //GMGLOG(LDMSD_LINFO, ">>getDriver()\n");
     uint32_t numDrivers = 0;
     ze_driver_handle_t *phDrivers = enumerateDrivers(&numDrivers);
     if (phDrivers == NULL) {
@@ -259,34 +259,34 @@ ze_driver_handle_t getDriver() {
 
     ze_driver_handle_t hDriver = phDrivers[0];
     GMG_FREE(phDrivers);
-    GMGLOG(LDMSD_LINFO, "<<getDriver()\n");
+    //GMGLOG(LDMSD_LINFO, "<<getDriver()\n");
     return hDriver;
 }
 
 ze_device_handle_t *enumerateGpuDevices(ze_driver_handle_t hDriver, uint32_t *pCount) {
-    GMGLOG(LDMSD_LINFO, ">>enumerateGpuDevices()\n");
+    //GMGLOG(LDMSD_LINFO, ">>enumerateGpuDevices()\n");
 
     ze_result_t res = gmgDeviceGet(hDriver, pCount, NULL);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGet(hDriver=%p,pCount=%p,NULL) => 0x%x\n", hDriver, pCount, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGet(hDriver=%p,pCount=%p,NULL) => 0x%x\n", hDriver, pCount, res);
         return NULL;
     }
-    GMGLOG(LDMSD_LDEBUG, "*pCount = %d\n", *pCount);
+    //GMGLOG(LDMSD_LDEBUG, "*pCount = %d\n", *pCount);
     if (*pCount < 1) {
-        GMGLOG(LDMSD_LERROR, "!!!*pCount=%d < 1\n", *pCount);
+        //GMGLOG(LDMSD_LERROR, "!!!*pCount=%d < 1\n", *pCount);
         return NULL;
     }
 
     ze_device_handle_t *phDevices = GMG_MALLOC(sizeof(ze_device_handle_t) * *pCount);
     res = gmgDeviceGet(hDriver, pCount, phDevices);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGet(hDriver=%p,pCount=%p,phDevices=%p) => 0x%x\n", hDriver, pCount,
-               phDevices, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGet(hDriver=%p,pCount=%p,phDevices=%p) => 0x%x\n", hDriver, pCount,
+        //       phDevices, res);
         GMG_FREE(phDevices);
         return NULL;
     }
 
-    GMGLOG(LDMSD_LINFO, "<<enumerateGpuDevices()\n");
+    //GMGLOG(LDMSD_LINFO, "<<enumerateGpuDevices()\n");
     return phDevices;
 }
 
@@ -298,7 +298,7 @@ void freeZeDeviceHandle(
 
 const char *getGpuDeviceName(
         ze_device_handle_t hDevice) {
-    static char szName[ZE_MAX_DEVICE_NAME1];
+    static char szName[ZE_MAX_DEVICE_NAME+1];
     memset(szName, 0, sizeof(szName)/sizeof(szName[0]));
 
     ze_device_properties_t deviceProperties = {
@@ -306,13 +306,13 @@ const char *getGpuDeviceName(
 
     ze_result_t res = gmgDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-               hDevice, &deviceProperties, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
+        //       hDevice, &deviceProperties, res);
         return szName;
     }
 
     size_t nameLength = strnlen(deviceProperties.name, ZE_MAX_DEVICE_NAME);
-    GMGLOG(LDMSD_LDEBUG, "%s has length = %ld\n", deviceProperties.name, nameLength);
+    //GMGLOG(LDMSD_LDEBUG, "%s has length = %ld\n", deviceProperties.name, nameLength);
 
     strncpy(szName, deviceProperties.name, ZE_MAX_DEVICE_NAME);
     return szName;
@@ -328,12 +328,12 @@ const uint8_t *getGpuUuid(
 
     ze_result_t res = gmgDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-               hDevice, &deviceProperties, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
+        //       hDevice, &deviceProperties, res);
         return uuid;
     }
 
-    for (size_t i = 0; i < ZE_MAX_DEVICE_UUID_SIZE; i) {
+    for (size_t i = 0; i < ZE_MAX_DEVICE_UUID_SIZE; i++) {
         uuid[i] = deviceProperties.uuid.id[i];
     }
 
@@ -343,7 +343,7 @@ const uint8_t *getGpuUuid(
 static zes_engine_handle_t *getEngineDomains(ze_device_handle_t hDevice, uint32_t *pCount) {
     gmgsDeviceEnumEngineGroups(hDevice, pCount, NULL);
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!count = 0\n");
+        //GMGLOG(LDMSD_LERROR, "!!!count = 0\n");
         return NULL;
     }
 
@@ -352,8 +352,8 @@ static zes_engine_handle_t *getEngineDomains(ze_device_handle_t hDevice, uint32_
     ze_result_t res = gmgsDeviceEnumEngineGroups(hDevice, pCount, phEngine);
 
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgsDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
-               hDevice, pCount, phEngine, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgsDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
+        //       hDevice, pCount, phEngine, res);
         GMG_FREE(phEngine);
         return NULL;
     }
@@ -365,7 +365,7 @@ double getGpuUtilization(ze_device_handle_t hDevice) {
     uint32_t count = 0;
     zes_engine_handle_t *phEngine = getEngineDomains(hDevice, &count);
     if (phEngine == NULL) {
-        GMGLOG(LDMSD_LERROR, "!!!getEngineDomains(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
+        //GMGLOG(LDMSD_LERROR, "!!!getEngineDomains(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
         return -99.9;
     }
 
@@ -397,7 +397,7 @@ static
 zes_mem_handle_t *getMemoryModules(ze_device_handle_t hDevice, uint32_t *pCount) {
     zesDeviceEnumMemoryModules(hDevice, pCount, NULL);
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!Could not retrieve memory modules\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Could not retrieve memory modules\n");
         return NULL;
     }
     size_t memSize = sizeof(zes_engine_handle_t) * *pCount;
@@ -405,8 +405,8 @@ zes_mem_handle_t *getMemoryModules(ze_device_handle_t hDevice, uint32_t *pCount)
     ze_result_t res =zesDeviceEnumMemoryModules(hDevice, pCount, phMemoryModules);
 
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumMemoryModules(hDevice=%p,pCount=%p,phMemoryModules=%p) => 0x%x\n",
-               hDevice, pCount, phMemoryModules, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumMemoryModules(hDevice=%p,pCount=%p,phMemoryModules=%p) => 0x%x\n",
+        //       hDevice, pCount, phMemoryModules, res);
         GMG_FREE(phMemoryModules);
         return NULL;
     }
@@ -423,18 +423,18 @@ double getMemoryUtilization(
     uint32_t count = 0;
     zes_mem_handle_t *phMemoryModules = getMemoryModules(hDevice, &count);
     if (phMemoryModules == NULL) {
-        GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
+        //GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
         return -99.9;
     }
 
     int64_t allocatableMemory = 0;
     int64_t usedMemory = 0;
 
-    for (size_t i = 0; i < count; i) {
+    for (size_t i = 0; i < count; i++) {
         zes_mem_state_t memoryState = {};
         zesMemoryGetState(phMemoryModules[i], &memoryState);
-        allocatableMemory = memoryState.size;
-        usedMemory = memoryState.size - memoryState.free;
+        allocatableMemory += memoryState.size;
+        usedMemory += memoryState.size - memoryState.free;
     }
     if (allocatableMemory == 0) {
         return 0.0;
@@ -453,15 +453,15 @@ uint64_t getMemVRAMUsed(ze_device_handle_t hDevice) {
     uint32_t count = 0;
     zes_mem_handle_t *phMemoryModules = getMemoryModules(hDevice, &count);
     if (phMemoryModules == NULL) {
-        GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
+        //GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
         return 999999;
     }
 
     int64_t usedMemory = 0;
-    for (size_t i = 0; i < count; i) {
+    for (size_t i = 0; i < count; i++) {
         zes_mem_state_t memoryState = {};
         zesMemoryGetState(phMemoryModules[i], &memoryState);
-        usedMemory = memoryState.size - memoryState.free;
+        usedMemory += memoryState.size - memoryState.free;
     }
     GMG_FREE(phMemoryModules);
 
@@ -484,13 +484,13 @@ int32_t getSysClockFreq(ze_device_handle_t hDevice) {
 
 int64_t getCumulativeReadCounter(zes_mem_handle_t *phMemoryModules, uint32_t count) {
     int64_t cumulativeReadCount = 0;
-    for (uint32_t i = 0; i < count; i) {
+    for (uint32_t i = 0; i < count; i++) {
         zes_mem_bandwidth_t memoryBandwidth = {};
         if (zesMemoryGetBandwidth(phMemoryModules[i], &memoryBandwidth) != ZE_RESULT_SUCCESS) {
             return -9999;
         }
-        GMGLOG(LDMSD_LDEBUG, "memoryBandwidth.readCounter = %ld\n", memoryBandwidth.readCounter);
-        cumulativeReadCount = memoryBandwidth.readCounter;
+        //GMGLOG(LDMSD_LDEBUG, "memoryBandwidth.readCounter = %ld\n", memoryBandwidth.readCounter);
+        cumulativeReadCount += memoryBandwidth.readCounter;
     }
 
     return cumulativeReadCount;
@@ -504,10 +504,10 @@ double getMemoryReadBandwidth(ze_device_handle_t hDevice) {
     uint32_t count = 0;
     zes_mem_handle_t *phMemoryModules = getMemoryModules(hDevice, &count);
     if (phMemoryModules == NULL) {
-        GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
+        //GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
         return 999999.0;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     double bandwidth = -99999.0;
     do {
@@ -533,13 +533,13 @@ double getMemoryReadBandwidth(ze_device_handle_t hDevice) {
 
 int64_t getCumulativeWriteCounter(zes_mem_handle_t *phMemoryModules, uint32_t count) {
     int64_t cumulativeWriteCount = 0;
-    for (uint32_t i = 0; i < count; i) {
+    for (uint32_t i = 0; i < count; i++) {
         zes_mem_bandwidth_t memoryBandwidth = {};
         if (zesMemoryGetBandwidth(phMemoryModules[i], &memoryBandwidth) != ZE_RESULT_SUCCESS) {
             return -9999;
         }
-        GMGLOG(LDMSD_LDEBUG, "memoryBandwidth.writeCounter = %ld\n", memoryBandwidth.writeCounter);
-        cumulativeWriteCount = memoryBandwidth.writeCounter;
+        //GMGLOG(LDMSD_LDEBUG, "memoryBandwidth.writeCounter = %ld\n", memoryBandwidth.writeCounter);
+        cumulativeWriteCount += memoryBandwidth.writeCounter;
     }
 
     return cumulativeWriteCount;
@@ -553,10 +553,10 @@ double getMemoryWriteBandwidth(ze_device_handle_t hDevice) {
     uint32_t count = 0;
     zes_mem_handle_t *phMemoryModules = getMemoryModules(hDevice, &count);
     if (phMemoryModules == NULL) {
-        GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
+        //GMGLOG(LDMSD_LERROR, "!!!getMemoryModules(hDevice=%p, &count=%p) => NULL, count=%d\n", hDevice, &count, count);
         return 999999.0;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     double bandwidth = -99999.0;
     do {
@@ -583,12 +583,12 @@ double getMemoryWriteBandwidth(ze_device_handle_t hDevice) {
 zes_perf_handle_t *getPerformanceFactorDomains(ze_device_handle_t hDevice, uint32_t *pCount) {
     ze_result_t res = zesDeviceEnumPerformanceFactorDomains(hDevice, pCount, NULL);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,&count=%p,NULL) => 0x%x\n",
-               hDevice, pCount, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,&count=%p,NULL) => 0x%x\n",
+         //      hDevice, pCount, res);
         return NULL;
     }
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!Could not retrieve performance factor domains: *pCount = 0\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Could not retrieve performance factor domains: *pCount = 0\n");
         return NULL;
     }
 
@@ -597,8 +597,8 @@ zes_perf_handle_t *getPerformanceFactorDomains(ze_device_handle_t hDevice, uint3
 
     res = zesDeviceEnumPerformanceFactorDomains(hDevice, pCount, phPerf);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,pCount=%p,phPerf=%p) => 0x%x\n",
-               hDevice, pCount, phPerf, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,pCount=%p,phPerf=%p) => 0x%x\n",
+        //       hDevice, pCount, phPerf, res);
         GMG_FREE(phPerf);
         return NULL;
     }
@@ -615,13 +615,13 @@ double getPerfLevel(ze_device_handle_t hDevice) {
     if (pHandle == NULL) {
         return -9999.9;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     double originalFactor = -9999.9;
     ze_result_t res = zesPerformanceFactorGetConfig(pHandle[0], &originalFactor);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesPerformanceFactorGetConfig(pHandle[0]=%p,&originalFactor=%p) => 0x%x\n",
-               pHandle[0], &originalFactor, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesPerformanceFactorGetConfig(pHandle[0]=%p,&originalFactor=%p) => 0x%x\n",
+        //       pHandle[0], &originalFactor, res);
     }
     GMG_FREE(pHandle);
 
@@ -634,7 +634,7 @@ zes_ras_handle_t *getRasError(ze_device_handle_t hDevice, uint32_t *pCount) {
         return NULL;
     }
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!Could not retrieve ras error sets: *pCount == 0\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Could not retrieve ras error sets: *pCount == 0\n");
         return NULL;
     }
     size_t memSize = sizeof(zes_ras_handle_t) * *pCount;
@@ -642,8 +642,8 @@ zes_ras_handle_t *getRasError(ze_device_handle_t hDevice, uint32_t *pCount) {
 
     res = zesDeviceEnumRasErrorSets(hDevice, pCount, rasError);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumRasErrorSets(hDevice=%p,pCount=%p,rasError=%p) => 0x%x\n",
-               hDevice, pCount, rasError, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumRasErrorSets(hDevice=%p,pCount=%p,rasError=%p) => 0x%x\n",
+        //       hDevice, pCount, rasError, res);
         GMG_FREE(rasError);
         return NULL;
     }
@@ -656,7 +656,7 @@ zes_pwr_handle_t *getPowerDomains(ze_device_handle_t hDevice, uint32_t *pCount) 
         return NULL;
     }
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!Could not retrieve power domains: *pCount == 0\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Could not retrieve power domains: *pCount == 0\n");
         return NULL;
     }
 
@@ -665,8 +665,8 @@ zes_pwr_handle_t *getPowerDomains(ze_device_handle_t hDevice, uint32_t *pCount) 
 
     res = zesDeviceEnumPowerDomains(hDevice, pCount, phPower);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPowerDomains(hDevice=%p,pCount=%p,phPower=%p) => 0x%x\n",
-               hDevice, pCount, phPower, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumPowerDomains(hDevice=%p,pCount=%p,phPower=%p) => 0x%x\n",
+        //       hDevice, pCount, phPower, res);
         GMG_FREE(phPower);
         return NULL;
     }
@@ -682,23 +682,23 @@ uint32_t readRasErrorPropAndState(ze_device_handle_t hDevice, zes_ras_properties
     if (pHandle == NULL) {
         return -99;
     }
-    GMGLOG(LDMSD_LDEBUG, "ras-error-count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "ras-error-count = %d\n", count);
 
     ze_result_t res = zesRasGetProperties(pHandle[0], &properties);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesRasGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
-               pHandle[0], &properties, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesRasGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
+        //       pHandle[0], &properties, res);
         return -9999;
     }
 
     ze_bool_t clear = 0;
     res = zesRasGetState(pHandle[0], clear, &state);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesRasGetState(pHandle[0]=%p,clear=%p,&state=%p) => 0x%x\n",
-               pHandle[0], clear, &state, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesRasGetState(pHandle[0]=%p,clear=%p,&state=%p) => 0x%x\n",
+        //       pHandle[0], clear, &state, res);
         return -9999;
     }
-    GMGLOG(LDMSD_LDEBUG, "state=%p", &state);
+    //GMGLOG(LDMSD_LDEBUG, "state=%p", &state);
     GMG_FREE(pHandle);
     return 0;
 }
@@ -909,7 +909,7 @@ int32_t getPowerUsage(ze_device_handle_t hDevice) {
     if (pHandle == NULL) {
         return -99;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     int32_t powerUsage = -999;
     do {
@@ -941,13 +941,13 @@ int32_t getPowerCap(ze_device_handle_t hDevice) {
     if (pHandle == NULL) {
         return -99;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     zes_power_properties_t properties;
     ze_result_t res = zesPowerGetProperties(pHandle[0], &properties);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesPowerGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
-               pHandle[0], &properties, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesPowerGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
+        //       pHandle[0], &properties, res);
         return -9999;
     }
     GMG_FREE(pHandle);
@@ -961,7 +961,7 @@ zes_temp_handle_t *getDeviceEnumTemperatureSensors(ze_device_handle_t hDevice, u
         return NULL;
     }
     if (*pCount == 0) {
-        GMGLOG(LDMSD_LERROR, "!!!Could not enum temperature sensors: *pCount == 0\n");
+        //GMGLOG(LDMSD_LERROR, "!!!Could not enum temperature sensors: *pCount == 0\n");
         return NULL;
     }
 
@@ -970,8 +970,8 @@ zes_temp_handle_t *getDeviceEnumTemperatureSensors(ze_device_handle_t hDevice, u
 
     res = zesDeviceEnumTemperatureSensors(hDevice, pCount, pHandle);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumTemperatureSensors(hDevice=%p,pCount=%p,pHandle=%p) => 0x%x\n",
-               hDevice, pCount, pHandle, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDeviceEnumTemperatureSensors(hDevice=%p,pCount=%p,pHandle=%p) => 0x%x\n",
+        //       hDevice, pCount, pHandle, res);
         GMG_FREE(pHandle);
         return NULL;
     }
@@ -989,7 +989,7 @@ double getGpuTemp(ze_device_handle_t hDevice) {
     if (pHandle == NULL) {
         return -99.0;
     }
-    GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
+    //GMGLOG(LDMSD_LDEBUG, "count = %d\n", count);
 
     double gpuTemperature = -999.0;
 
@@ -1011,8 +1011,8 @@ int64_t getPciMaxSpeed(
 
     ze_result_t res = zesDevicePciGetStats(hDevice, &state);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!zesDevicePciGetStats(hDevice=%p,&state=%p) => 0x%x\n",
-               hDevice, &state, res);
+        //GMGLOG(LDMSD_LERROR, "!!!zesDevicePciGetStats(hDevice=%p,&state=%p) => 0x%x\n",
+        //       hDevice, &state, res);
         return -99999;
     }
     return state.speed.maxBandwidth;
@@ -1031,7 +1031,7 @@ static ze_result_t gmgsDeviceGetProperties(
 
 const char *getGpuSerialNumber(
         zes_device_handle_t hDevice) {
-    static char szSerialNumber[ZES_STRING_PROPERTY_SIZE1];
+    static char szSerialNumber[ZES_STRING_PROPERTY_SIZE+1];
     memset(szSerialNumber, 0, sizeof(szSerialNumber)/sizeof(szSerialNumber[0]));
 
     zes_device_properties_t deviceProperties = {
@@ -1039,13 +1039,13 @@ const char *getGpuSerialNumber(
 
     ze_result_t res = gmgsDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
-        GMGLOG(LDMSD_LERROR, "!!!gmgsDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-               hDevice, &deviceProperties, res);
+        //GMGLOG(LDMSD_LERROR, "!!!gmgsDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
+         //      hDevice, &deviceProperties, res);
         return szSerialNumber;
     }
 
     size_t serialNumberLength = strnlen(deviceProperties.serialNumber, ZES_STRING_PROPERTY_SIZE);
-    GMGLOG(LDMSD_LDEBUG, "%s has length = %ld\n", deviceProperties.serialNumber, serialNumberLength);
+    //GMGLOG(LDMSD_LDEBUG, "%s has length = %ld\n", deviceProperties.serialNumber, serialNumberLength);
 
     strncpy(szSerialNumber, deviceProperties.serialNumber, ZES_STRING_PROPERTY_SIZE);
     return szSerialNumber;

@@ -184,11 +184,7 @@ base_data_t base_config(struct attr_value_list *avl,
 	errno = 0;
 
 	base_data_t base = calloc(1, sizeof(*base));
-	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 188\n", base->set);
 	if (!base) {
-	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 191\n", base->set);
 		log(LDMSD_LERROR, "Memory allocation failure in %s\n", name);
 		errno = ENOMEM;
 		return NULL;
@@ -198,8 +194,6 @@ base_data_t base_config(struct attr_value_list *avl,
 
 	base->pi_name = strdup(name);
 	if (!base->pi_name) {
-	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 202\n", base->set);
 		log(LDMSD_LERROR, "Memory allocation failure in %s\n", name);
 		free(base);
 		errno = ENOMEM;
@@ -216,8 +210,6 @@ base_data_t base_config(struct attr_value_list *avl,
 	value = av_value(avl, "component_id");
 	if (value)
 		base->component_id = (uint64_t)(atoi(value));
-    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 220\n", base->set);
 	value = av_value(avl, "instance");
 	if (!value) {
 		log(LDMSD_LERROR,
@@ -226,18 +218,13 @@ base_data_t base_config(struct attr_value_list *avl,
 		goto einval;
 	}
 	base->instance_name = strdup(value);
-	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 230\n", base->set);
 
 	value = av_value(avl, "schema");
 	if (!value || value[0] == '\0')
 		base->schema_name = strdup(def_schema);
-	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 236\n", base->set);
 	else
 		base->schema_name = strdup(value);
-   	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 240\n", base->set);
+
 
 	base->job_id_idx = BASE_JOB_ID;
 	job_set_name = av_value(avl, "job_set");
@@ -253,8 +240,6 @@ base_data_t base_config(struct attr_value_list *avl,
 	value = av_value(avl, "set_array_card");
 	base->set_array_card = (value)?(strtol(value, NULL, 0)):(1);
 	base->log = log;
-	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in sampler_base.c at 257\n", base->set);
 	return base;
 einval:
 	errno = EINVAL;

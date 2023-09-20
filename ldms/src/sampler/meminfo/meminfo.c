@@ -188,22 +188,31 @@ static int config(struct ldmsd_plugin *self, struct attr_value_list *kwl, struct
 
 	base = base_config(avl, SAMP, SAMP, msglog);
 	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 191\n", base->set);
-	/*if (!base) {
+    msglog(LDMSD_LERROR, "%s is the base- value in meminfo.c at 191\n", base);
+    msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 192\n", base->set);
+	if (!base) {
 	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 194\n", base->set);
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 195\n", base->set);
 		rc = errno;
 		goto err;
 	} else {
-	    //Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-        msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 199\n", base->set);
-    }*/
+	    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 200\n", base->set);
+    }
     if(base == NULL){
             // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 203\n", base);
+            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 204 NULL\n", base);
         } else {
             // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 206\n", base);
+            msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 207\n", base);
+        }
+
+    if(base->set == NULL){
+            // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+            msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 212 NULL\n", base->set);
+        } else {
+            // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+            msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 215\n", base->set);
         }
 
 	rc = create_metric_set(base);
@@ -236,9 +245,18 @@ static int sample(struct ldmsd_sampler *self)
 		return EINVAL;
 	}
 
+    // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 249\n", base);
+    msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 250\n", base->set);
 	base_sample_begin(base);
-	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 241\n", base->set);
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 254 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 257\n", base->set);
+    }
+
 	metric_no = metric_offset;
 	fseek(mf, 0, SEEK_SET);
 	do {
@@ -255,9 +273,21 @@ static int sample(struct ldmsd_sampler *self)
 		metric_no++;
 	} while (s);
  out:
+    if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 278 NULL\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 281\n", base->set);
+    }
 	base_sample_end(base);
-	// Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
-    msglog(LDMSD_LERROR, "%s is the base value in meminfo.c at 260\n", base->set);
+	if(base->set == NULL){
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 286\n", base->set);
+    } else {
+        // Log base value so that it appears in /opt/clmgr/log/ldms_sampler.log
+        msglog(LDMSD_LERROR, "%s is the base->set value in meminfo.c at 289\n", base->set);
+    }
 	return 0;
 }
 

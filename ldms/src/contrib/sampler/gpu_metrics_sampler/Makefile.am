@@ -65,7 +65,7 @@ SDLLDFLAGS = $(LDFLAGS0)
 AM_CPPFLAGS = @OVIS_INCLUDE_ABS@ $(SDLCFLAGS)
 AM_LDFLAGS = @OVIS_LIB_ABS@ $(SDLLDFLAGS)
 COMMON_LIBADD = -lsampler_base -lldms -lovis_util -lcoll @LDFLAGS_GETTIME@
-GMGLIBS = -L. -lgmg -L/usr/lib/x86_64-linux-gnu/ -lze_loader
+GMGLIBS = -L. ./libgmg.a -L/usr/lib/x86_64-linux-gnu/ -lze_loader
 
 if ENABLE_GPU_METRICS
 
@@ -75,7 +75,7 @@ libgmg_a_SOURCES = gmg_common_util.c gmg_log.c gather_gpu_metrics_from_one_api.c
 
 libgpumetrics_la_SOURCES = gpu_metrics_ldms_sampler.c
 libgpumetrics_la_LIBADD = $(COMMON_LIBADD) $(GMGLIBS)
-pkglib_LTLIBRARIES = libgpumetrics.la
+pkglib_LTLIBRARIES += libgpumetrics.la
 
 bin_PROGRAMS = bin/gpu_metrics_gatherer
 bin_gpu_metrics_gatherer_SOURCES = gather_gpu_metrics.cpp

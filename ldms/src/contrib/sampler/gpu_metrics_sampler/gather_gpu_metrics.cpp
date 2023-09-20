@@ -61,73 +61,73 @@ void printGpuMetrics(ze_device_handle_t device, uint32_t devNumber) {
 
     uint32_t metricNumber = 0;
     cout << fixed << setprecision(2);
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getGpuUtilization(device) << "           gpu_util" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getMemoryUtilization(device) << "           mem_util" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getMemVRAMUsed(device) << "       mem_vram_used" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getSysClockFreq(device) << "           sys_clock_freq" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getMemoryReadBandwidth(device) << "          mem_read_bandwidth" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getMemoryWriteBandwidth(device) << "          mem_write_bandwidth" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getPerfLevel(device) << "           perf_level" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getPowerUsage(device) << "             power_usage" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getGpuTemp(device) << "          gpu_temp" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalAcceleratorResetsError(device) << "       ue_accelerator_eng_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalCachesError(device) << "       ue_cache_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalPrgmError(device) << "       ue_programming_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalDriverError(device) << "       ue_driver_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalComputeError(device) << "       ue_compute_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalNonComputeError(device) << "       ue_non_compute_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasFatalDisplayError(device) << "       ue_display_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableAcceleratorResetsError(device) << "       ce_accelerator_eng_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableCachesError(device) << "       ce_cache_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectablePrgmError(device) << "       ce_programming_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableDriverError(device) << "       ce_driver_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableComputeError(device) << "       ce_compute_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableNonComputeError(device) << "       ce_non_compute_err" << endl;
 
-    cout << " " << devNumber << "     " << metricNumber << "         "
+    cout << " " << devNumber << "     " << metricNumber++ << "         "
          << getRasCorrectableDisplayError(device) << "       ce_display_err" << endl;
 }
 
@@ -162,11 +162,11 @@ int sampleGpuMetrics(int argc, char *argv[]) {
     cout << "-1    -1         " << numDevices << " GPU device(s) discovered" << endl;
 
     uint32_t devNumber = 0;
-    for (uint32_t i = 0; i < numDevices; i) {
+    for (uint32_t i = 0; i < numDevices; i++) {
         cout << " " << devNumber << "    -1         Device name = " << getGpuDeviceName(phDevices[devNumber]) << endl;
         cout << " " << devNumber << "    -1         Device uuid = " << convertUuidToString(getGpuUuid(phDevices[devNumber])) << endl;
         cout << " " << devNumber << "    -1         Serial number = " << getGpuSerialNumber(phDevices[devNumber])<< endl;
-        printGpuMetrics(phDevices[i], devNumber);
+        printGpuMetrics(phDevices[i], devNumber++);
     }
 
     freeZeDeviceHandle(phDevices);

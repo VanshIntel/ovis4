@@ -61,6 +61,6 @@ ldmsd_msg_log_f setGmgLoggingFunction(
         const ldmsd_msg_log_f fp) {
     ldmsd_msg_log_f oldPf = msglog;
     msglog = fp;
-    GMGLOG(LDMSD_LDEBUG, "Updated msglog\n");
+    //GMGLOG(LDMSD_LDEBUG, "Updated msglog\n");
     return oldPf;
 }

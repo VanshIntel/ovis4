@@ -82,7 +82,7 @@ int msSleep(long ms) {
 uint64_t getMsTimestamp() {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);    // 0 - success; -1 error, EINVAL clock_id not CLOCK_REALTIME
-    return (uint64_t) ts.tv_sec * THOUSAND  (uint64_t) ts.tv_nsec / MILLION;
+    return (uint64_t) ts.tv_sec * THOUSAND + (uint64_t) ts.tv_nsec / MILLION;
 }
 
 #ifdef ENABLE_AUTO_SIMULATION
@@ -96,7 +96,7 @@ bool isFileExists(const char *szFilePath) {
 #endif
 
 #define UUID_LENGTH 16
-#define UUID_CHAR_BUFFER_SIZE 2 * UUID_LENGTH  4  1
+#define UUID_CHAR_BUFFER_SIZE 2 * UUID_LENGTH + 4 + 1
 const char *convertUuidToString(const uint8_t *uuid) {
     static char szUuid[UUID_CHAR_BUFFER_SIZE];
     memset(szUuid, 0, UUID_CHAR_BUFFER_SIZE);
