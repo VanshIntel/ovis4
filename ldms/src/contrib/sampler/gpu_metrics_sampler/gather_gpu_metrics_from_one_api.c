@@ -55,12 +55,14 @@
 
 static uint64_t mallocCount = 0;
 
+static ovis_log_t mylog;
+
 size_t getMallocCount() {
     return mallocCount;
 }
 
 static void *GMG_MALLOC(size_t size) {
-    //GMGLOG(OVIS_LDEBUG, ">>GMG_MALLOC(size=%ld)\n", size);
+    ovis_log(mylog, OVIS_LDEBUG, ">>GMG_MALLOC(size=%ld)\n", size);
     void *p = calloc(size, 1);
     if (!p) {
         //GMGLOG(OVIS_LERROR, "!!!calloc(size=%ld, 1) => NULL\n", size);
@@ -198,7 +200,7 @@ ze_result_t gmgsEngineGetActivity(
     ze_result_t res = zesEngineGetActivity(hEngine, pStats);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesEngineGetActivity(hEngine=%p,pStats=%p) => 0x%x\n",
-        //       hEngine, pStats, res);
+        ///       hEngine, pStats, res);
     }
     return res;
 }
@@ -218,7 +220,7 @@ ze_result_t gmgsDeviceEnumEngineGroups(
     ze_result_t res = zesDeviceEnumEngineGroups(hDevice, pCount, phEngine);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
-        //       hDevice, pCount, phEngine, res);
+        ///       hDevice, pCount, phEngine, res);
     }
     return res;
 }
@@ -281,7 +283,7 @@ ze_device_handle_t *enumerateGpuDevices(ze_driver_handle_t hDriver, uint32_t *pC
     res = gmgDeviceGet(hDriver, pCount, phDevices);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!gmgDeviceGet(hDriver=%p,pCount=%p,phDevices=%p) => 0x%x\n", hDriver, pCount,
-        //       phDevices, res);
+         ///      phDevices, res);
         GMG_FREE(phDevices);
         return NULL;
     }
@@ -307,7 +309,7 @@ const char *getGpuDeviceName(
     ze_result_t res = gmgDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-        //       hDevice, &deviceProperties, res);
+        ///       hDevice, &deviceProperties, res);
         return szName;
     }
 
@@ -329,7 +331,7 @@ const uint8_t *getGpuUuid(
     ze_result_t res = gmgDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!gmgDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-          //     hDevice, &deviceProperties, res);
+         ///      hDevice, &deviceProperties, res);
         return uuid;
     }
 
@@ -353,7 +355,7 @@ static zes_engine_handle_t *getEngineDomains(ze_device_handle_t hDevice, uint32_
 
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!gmgsDeviceEnumEngineGroups(hDevice=%p,pCount=%p,phEngine=%p) => 0x%x\n",
-          //     hDevice, pCount, phEngine, res);
+         ///      hDevice, pCount, phEngine, res);
         GMG_FREE(phEngine);
         return NULL;
     }
@@ -406,7 +408,7 @@ zes_mem_handle_t *getMemoryModules(ze_device_handle_t hDevice, uint32_t *pCount)
 
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumMemoryModules(hDevice=%p,pCount=%p,phMemoryModules=%p) => 0x%x\n",
-          //     hDevice, pCount, phMemoryModules, res);
+        ///       hDevice, pCount, phMemoryModules, res);
         GMG_FREE(phMemoryModules);
         return NULL;
     }
@@ -584,7 +586,7 @@ zes_perf_handle_t *getPerformanceFactorDomains(ze_device_handle_t hDevice, uint3
     ze_result_t res = zesDeviceEnumPerformanceFactorDomains(hDevice, pCount, NULL);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,&count=%p,NULL) => 0x%x\n",
-        //       hDevice, pCount, res);
+         ///      hDevice, pCount, res);
         return NULL;
     }
     if (*pCount == 0) {
@@ -598,7 +600,7 @@ zes_perf_handle_t *getPerformanceFactorDomains(ze_device_handle_t hDevice, uint3
     res = zesDeviceEnumPerformanceFactorDomains(hDevice, pCount, phPerf);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumPerformanceFactorDomains(hDevice=%p,pCount=%p,phPerf=%p) => 0x%x\n",
-        //       hDevice, pCount, phPerf, res);
+        ///       hDevice, pCount, phPerf, res);
         GMG_FREE(phPerf);
         return NULL;
     }
@@ -621,7 +623,7 @@ double getPerfLevel(ze_device_handle_t hDevice) {
     ze_result_t res = zesPerformanceFactorGetConfig(pHandle[0], &originalFactor);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesPerformanceFactorGetConfig(pHandle[0]=%p,&originalFactor=%p) => 0x%x\n",
-        //       pHandle[0], &originalFactor, res);
+        ///       pHandle[0], &originalFactor, res);
     }
     GMG_FREE(pHandle);
 
@@ -643,7 +645,7 @@ zes_ras_handle_t *getRasError(ze_device_handle_t hDevice, uint32_t *pCount) {
     res = zesDeviceEnumRasErrorSets(hDevice, pCount, rasError);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumRasErrorSets(hDevice=%p,pCount=%p,rasError=%p) => 0x%x\n",
-        //       hDevice, pCount, rasError, res);
+        ///       hDevice, pCount, rasError, res);
         GMG_FREE(rasError);
         return NULL;
     }
@@ -666,7 +668,7 @@ zes_pwr_handle_t *getPowerDomains(ze_device_handle_t hDevice, uint32_t *pCount) 
     res = zesDeviceEnumPowerDomains(hDevice, pCount, phPower);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumPowerDomains(hDevice=%p,pCount=%p,phPower=%p) => 0x%x\n",
-        //       hDevice, pCount, phPower, res);
+        ///       hDevice, pCount, phPower, res);
         GMG_FREE(phPower);
         return NULL;
     }
@@ -687,7 +689,7 @@ uint32_t readRasErrorPropAndState(ze_device_handle_t hDevice, zes_ras_properties
     ze_result_t res = zesRasGetProperties(pHandle[0], &properties);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesRasGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
-        //       pHandle[0], &properties, res);
+         ///      pHandle[0], &properties, res);
         return -9999;
     }
 
@@ -695,7 +697,7 @@ uint32_t readRasErrorPropAndState(ze_device_handle_t hDevice, zes_ras_properties
     res = zesRasGetState(pHandle[0], clear, &state);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesRasGetState(pHandle[0]=%p,clear=%p,&state=%p) => 0x%x\n",
-        //       pHandle[0], clear, &state, res);
+        ///       pHandle[0], clear, &state, res);
         return -9999;
     }
     //GMGLOG(OVIS_LDEBUG, "state=%p", &state);
@@ -947,7 +949,7 @@ int32_t getPowerCap(ze_device_handle_t hDevice) {
     ze_result_t res = zesPowerGetProperties(pHandle[0], &properties);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesPowerGetProperties(pHandle[0]=%p,&properties=%p) => 0x%x\n",
-        //       pHandle[0], &properties, res);
+        ///       pHandle[0], &properties, res);
         return -9999;
     }
     GMG_FREE(pHandle);
@@ -971,7 +973,7 @@ zes_temp_handle_t *getDeviceEnumTemperatureSensors(ze_device_handle_t hDevice, u
     res = zesDeviceEnumTemperatureSensors(hDevice, pCount, pHandle);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDeviceEnumTemperatureSensors(hDevice=%p,pCount=%p,pHandle=%p) => 0x%x\n",
-        //       hDevice, pCount, pHandle, res);
+        ///       hDevice, pCount, pHandle, res);
         GMG_FREE(pHandle);
         return NULL;
     }
@@ -1012,7 +1014,7 @@ int64_t getPciMaxSpeed(
     ze_result_t res = zesDevicePciGetStats(hDevice, &state);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!zesDevicePciGetStats(hDevice=%p,&state=%p) => 0x%x\n",
-        //       hDevice, &state, res);
+        ///       hDevice, &state, res);
         return -99999;
     }
     return state.speed.maxBandwidth;
@@ -1040,7 +1042,7 @@ const char *getGpuSerialNumber(
     ze_result_t res = gmgsDeviceGetProperties(hDevice, &deviceProperties);
     if (res != ZE_RESULT_SUCCESS) {
         //GMGLOG(OVIS_LERROR, "!!!gmgsDeviceGetProperties(hDevice=%p, &deviceProperties=%p) => 0x%x",
-        //       hDevice, &deviceProperties, res);
+        ///       hDevice, &deviceProperties, res);
         return szSerialNumber;
     }
 
