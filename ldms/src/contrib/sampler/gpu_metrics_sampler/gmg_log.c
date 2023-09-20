@@ -56,7 +56,7 @@ extern ovis_log_t __gmg_log;
 ovis_log_t setGmgLoggingFunction(
         const ovis_log_t pi_log) {
     ovis_log_t oldPf = __gmg_log;
-    GMGLOG(OVIS_LDEBUG, "Updated gmg_log\n");
+    //GMGLOG(OVIS_LDEBUG, "Updated gmg_log\n");
     __gmg_log = pi_log;
     return oldPf;
 }
